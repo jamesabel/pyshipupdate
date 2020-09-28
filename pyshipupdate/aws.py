@@ -10,7 +10,7 @@ import boto3.exceptions
 from balsa import get_logger
 from awsimple import S3Access
 
-from pyshipupdate import Updater, __application_name__
+from pyshipupdate import Updater, __application_name__, rmdir
 
 log = get_logger(__application_name__)
 
@@ -89,8 +89,6 @@ class UpdaterAwsS3(S3Access, Updater):
         except boto3.exceptions.Boto3Error as e:
             log.warning(f"{lip_dir=} {e}")
 
-        shutil.rmtree(temp_dir, ignore_errors=True)
-        if Path(temp_dir).exists():
-            log.warning(f'could not remove "{temp_dir}"')
+        rmdir(temp_dir)
 
         return success
