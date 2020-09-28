@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 from pathlib import Path
 from enum import Enum
 from dataclasses import dataclass
+from typing import Dict
 
 from semver import VersionInfo
 from typeguard import typechecked
@@ -30,14 +31,14 @@ class Updater(ABC):
     allowed_pre_release = []  # test, dev, beta, etc.
 
     @abstractmethod
-    def get_available_versions(self) -> dict:
+    def get_available_versions(self) -> Dict[VersionInfo, Path]:
         """
         get available versions
         """
         ...
 
     @abstractmethod
-    def install_lip(self, version, destination_dir: Path) -> bool:
+    def install_lip(self, version: VersionInfo, destination_dir: Path) -> bool:
         """
         put a lip into a destination dir
         :param version: version of lip to get
@@ -74,7 +75,6 @@ class Updater(ABC):
         log.info(f"{current_version=}")
         greatest_version = self.get_greatest_version()
         log.info(f"{greatest_version=}")
-        if greatest_version is not None:
-            if greatest_version > current_version:
-                did_update = self.install_lip(greatest_version, app_dir)
+        if greatest_version is not None and greatest_version > current_version:
+            did_update = self.install_lip(greatest_version, app_dir)
         return did_update
