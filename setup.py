@@ -2,7 +2,7 @@ from setuptools import setup
 
 from pyshipupdate import __application_name__, __author__, __version__, __description__, __author_email__, __download_url__, __url__
 
-requirements = ["balsa", "requests", "attrs", "typeguard", "semver", "python-dateutil", "boto3", "awsimple", "pywin32"]
+requirements = ["balsa", "requests", "attrs", "typeguard", "semver", "python-dateutil", "boto3", "awsimple"]
 
 with open("readme.md", encoding="utf-8") as f:
     long_description = "\n" + f.read()

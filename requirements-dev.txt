@@ -5,6 +5,7 @@ typeguard
 sentry-sdk
 boto3
 awsimple
+semver
 #
 # pypi
 twine
@@ -17,9 +18,6 @@ black
 #
 # docs
 sphinx
-#
-semver
-pywin32
 #
 # testing
 pytest
