@@ -21,7 +21,7 @@ setup(
     download_url=__download_url__,
     keywords=["freezer", "installer", "ship"],
     classifiers=[],
-    packages=[__application_name__, f"{__application_name__}.launcher", f"{__application_name__}.updater", f"{__application_name__}.aws"],
+    packages=[__application_name__],
     package_data={
         "": ["*.ico"],
     },
