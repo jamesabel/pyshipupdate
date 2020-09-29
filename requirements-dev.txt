@@ -1,0 +1,24 @@
+balsa
+requests
+attrs
+typeguard
+sentry-sdk
+boto3
+awsimple
+semver
+#
+# pypi
+twine
+keyring
+#
+# development
+wheel
+wheel-inspect
+black
+#
+# docs
+sphinx
+#
+# testing
+pytest
+pytest-cov
