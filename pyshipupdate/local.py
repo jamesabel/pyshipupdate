@@ -40,7 +40,7 @@ class UpdaterLocal(Updater):
             log.info(f"{available_versions=}")
         return available_versions
 
-    def install_lip(self, version: VersionInfo, app_dir: Path) -> bool:
+    def install_clip(self, version: VersionInfo, app_dir: Path) -> bool:
         """
         install a particular version of a lip
         :param version: version to install
