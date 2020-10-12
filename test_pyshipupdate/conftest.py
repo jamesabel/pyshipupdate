@@ -29,14 +29,14 @@ def updater_fixture():
             pass
 
     # make and upload fake test clips (not real clip contents)
-    rmdir(TestDirs.clips)
+    rmdir(TestDirs.app_dir)
     if is_mocked_flag:
         os.environ[use_moto_mock_env_var] = "1"
     updater = UpdaterAwsS3(test_name)
     updater.create_bucket()
     for version in ["0.0.1", "0.0.2"]:
         clip_name = f"{test_name}_{version}"
-        clip_file_path = Path(TestDirs.clips, clip_name, f"{clip_name}.txt")  # just some file for now - not real clip contents to keep it small
+        clip_file_path = Path(TestDirs.app_dir, clip_name, f"{clip_name}.txt")  # just some file for now - not real clip contents to keep it small
         clip_file_path.parent.mkdir(parents=True, exist_ok=True)
         clip_file_path.write_text(version)
         updater.release(VersionInfo.parse(version), clip_file_path.parent)

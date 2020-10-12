@@ -5,5 +5,4 @@ from .__version__ import __application_name__, __author__, __version__, __descri
 from .os_util import is_windows, mkdirs, rmdir, copy_tree, get_target_os
 from .version import version_from_clip_zip
 from .updater import Updater
-from .local import UpdaterLocal
 from .aws import UpdaterAwsS3

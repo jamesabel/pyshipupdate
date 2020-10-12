@@ -2,13 +2,17 @@ from dataclasses import dataclass
 from pathlib import Path
 from tempfile import mkdtemp
 import shutil
+import os
 from semver import VersionInfo
 import time
 from datetime import datetime
 import json
+from typing import List
+import zipfile
 
 from balsa import get_logger
 from awsimple import S3Access
+from typeguard import typechecked
 
 from pyshipupdate import Updater, __application_name__, version_from_clip_zip, CLIP_EXT
 
@@ -25,7 +29,8 @@ class UpdaterAwsS3(Updater, S3Access):
         S3Access.__init__(self, target_app_name)
         Updater.__init__(self, target_app_name)
 
-    def get_available_versions(self):
+    @typechecked
+    def get_available_versions(self) -> List[VersionInfo]:
         available_versions = []
         for s3_key in self.dir():
             version = version_from_clip_zip(self.target_app_name, s3_key)
@@ -34,9 +39,22 @@ class UpdaterAwsS3(Updater, S3Access):
         available_versions.sort()
         return available_versions
 
+    @typechecked
     def install_clip(self, version: VersionInfo, destination_dir: Path) -> bool:
-        return True
+        s3_key = f"{self.target_app_name}-{str(version)}.{CLIP_EXT}"
+        destination_path = Path(destination_dir, s3_key)
+        if self.object_exists(s3_key):
+            self.download_cached(s3_key, destination_dir)
+            with zipfile.ZipFile(destination_path, 'r') as zip_ref:
+                zip_ref.extractall(destination_dir)
+            os.remove(destination_path)
+            install_success = True
+        else:
+            log.warning(f"{self.bucket_name}/{s3_key} not found")
+            install_success = False
+        return install_success
 
+    @typechecked
     def release(self, version: VersionInfo, clip_dir_path: Path):
 
         self.create_bucket()  # just in case the S3 bucket doesn't exist
@@ -51,5 +69,5 @@ class UpdaterAwsS3(Updater, S3Access):
 
         self.upload(clip_file_path, clip_file_path.name)
         ts = time.time()
-        app_info = {"app_name": self.target_app_name, "version": str(version), "release_timestamp": ts, "release_timestamp_human": datetime.fromtimestamp(ts).isoformat()}
-        self.write_string(json.dumps(app_info), f"{self.target_app_name}.json")
+        release_info = {"app_name": self.target_app_name, "version": str(version), "release_timestamp": ts, "release_timestamp_human": datetime.fromtimestamp(ts).isoformat()}
+        self.write_string(json.dumps(release_info), f"{self.target_app_name}_release.json")

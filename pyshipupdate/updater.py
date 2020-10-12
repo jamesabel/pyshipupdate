@@ -1,8 +1,7 @@
 from abc import ABC, abstractmethod
 from pathlib import Path
 from enum import Enum
-from typing import Dict, List
-import json
+from typing import List
 
 from semver import VersionInfo
 from typeguard import typechecked
@@ -31,7 +30,7 @@ class Updater(ABC):
         self.allowed_pre_release = allowed_pre_release  # test, dev, beta, etc.
 
     @abstractmethod
-    def get_available_versions(self) -> Dict[VersionInfo, Path]:
+    def get_available_versions(self) -> List[VersionInfo]:
         """
         get available versions
         """
@@ -42,8 +41,8 @@ class Updater(ABC):
         """
         put a clip into a destination dir
         :param version: version of clip to get
-        :param destination_dir: dir to put the lip
-        :return: True if were able to get the lip, False otherwise
+        :param destination_dir: dir to put the clip
+        :return: True if were able to get the clip, False otherwise
         """
         ...
 
@@ -58,7 +57,7 @@ class Updater(ABC):
         if len(available_versions) == 0:
             greatest_version = None
         else:
-            greatest_version = sorted(list(available_versions.keys()))[-1]
+            greatest_version = sorted(available_versions)[-1]
         log.info(f"{greatest_version=}")
         return greatest_version
 
