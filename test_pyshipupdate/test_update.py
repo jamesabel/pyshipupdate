@@ -1,6 +1,6 @@
 from semver import VersionInfo
 
-from test_pyshipupdate import TestDirs
+from test_pyshipupdate import TstDirs
 
 
 def test_update_not_new(updater_fixture):
@@ -13,5 +13,5 @@ def test_update_new(updater_fixture):
     current_version = "0.0.1"  # we'll have 0.0.1 and 0.0.2 available, so we'll have a new version
     s3_objects = updater_fixture.dir()
     print(s3_objects)
-    updater_success = updater_fixture.update(VersionInfo.parse(current_version), TestDirs.app_dir)
+    updater_success = updater_fixture.update(VersionInfo.parse(current_version), TstDirs.app_dir)
     assert updater_success  # update

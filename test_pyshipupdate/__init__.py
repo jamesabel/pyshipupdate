@@ -1,3 +1,3 @@
 name = "test_pyshipupdate"
 
-from .tst_util import TestDirs, test_name
+from .tst_util import TstDirs, test_name
