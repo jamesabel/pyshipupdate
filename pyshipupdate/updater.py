@@ -1,8 +1,7 @@
 from abc import ABC, abstractmethod
 from pathlib import Path
 from enum import Enum
-from dataclasses import dataclass
-from typing import Dict
+from typing import List
 
 from semver import VersionInfo
 from typeguard import typechecked
@@ -20,30 +19,30 @@ class PreReleaseTypes(Enum):
     beta = "beta"
 
 
-@dataclass
 class Updater(ABC):
     """
     pyship updater
     Updates a pyship app to its latest released version.  Instantiated and called by a running pyship app.
     """
 
-    target_app_name: str
-    allowed_pre_release = []  # test, dev, beta, etc.
+    def __init__(self, target_app_name: str, allowed_pre_release: List[PreReleaseTypes] = None):
+        self.target_app_name = target_app_name
+        self.allowed_pre_release = allowed_pre_release  # test, dev, beta, etc.
 
     @abstractmethod
-    def get_available_versions(self) -> Dict[VersionInfo, Path]:
+    def get_available_versions(self) -> List[VersionInfo]:
         """
         get available versions
         """
         ...
 
     @abstractmethod
-    def install_lip(self, version: VersionInfo, destination_dir: Path) -> bool:
+    def install_clip(self, version: VersionInfo, destination_dir: Path) -> bool:
         """
-        put a lip into a destination dir
-        :param version: version of lip to get
-        :param destination_dir: dir to put the lip
-        :return: True if were able to get the lip, False otherwise
+        put a clip into a destination dir
+        :param version: version of clip to get
+        :param destination_dir: dir to put the clip
+        :return: True if were able to get the clip, False otherwise
         """
         ...
 
@@ -58,15 +57,15 @@ class Updater(ABC):
         if len(available_versions) == 0:
             greatest_version = None
         else:
-            greatest_version = sorted(list(available_versions.keys()))[-1]
+            greatest_version = sorted(available_versions)[-1]
         log.info(f"{greatest_version=}")
         return greatest_version
 
     @typechecked(always=True)
     def update(self, current_version: (str, VersionInfo), app_dir: Path = Path("..")) -> bool:
         """
-        update this (the target) application (lip dir)
-        :param current_version: current version of the running app
+        update this (the target) application (clip dir)
+        :param current_version: current version of the running app (both string and VersionInfo allowed)
         :param app_dir: application directory.  Normally this is just one level "up" from the execution directory, but this can be provided mainly for testing purposes.
         """
         did_update = False
@@ -76,5 +75,14 @@ class Updater(ABC):
         greatest_version = self.get_greatest_version()
         log.info(f"{greatest_version=}")
         if greatest_version is not None and greatest_version > current_version:
-            did_update = self.install_lip(greatest_version, app_dir)
+            did_update = self.install_clip(greatest_version, app_dir)
         return did_update
+
+    @abstractmethod
+    def release(self, version: VersionInfo, clip_dir_path: Path):
+        """
+        Release a new app version.  Uploads the clip file to the cloud and sets the new app version file.
+        :param version: new app version
+        :param clip_dir_path: path to clip file ("zipped" clip directory)
+        """
+        ...

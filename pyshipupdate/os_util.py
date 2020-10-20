@@ -17,7 +17,7 @@ log = get_logger(__application_name__)
 
 @typechecked(always=True)
 def is_windows() -> bool:
-    return system() == "Windows"
+    return system().lower() == "windows"
 
 
 @typechecked(always=True)

@@ -22,3 +22,4 @@ sphinx
 # testing
 pytest
 pytest-cov
+moto
