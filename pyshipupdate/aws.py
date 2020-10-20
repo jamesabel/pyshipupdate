@@ -41,15 +41,17 @@ class UpdaterAwsS3(Updater, S3Access):
 
     @typechecked
     def install_clip(self, version: VersionInfo, destination_dir: Path) -> bool:
-        s3_key = f"{self.target_app_name}_{str(version)}.{CLIP_EXT}"
-        destination_path = Path(destination_dir, s3_key)
+        clip_name = f"{self.target_app_name}_{str(version)}"
+        s3_key = f"{clip_name}.{CLIP_EXT}"
+        download_path = Path(destination_dir, s3_key)
+        extract_path = Path(destination_dir, clip_name)
         if self.object_exists(s3_key):
-            self.download_cached(s3_key, destination_path)
-            log.info(f"extracting {destination_path} ({destination_path.absolute()}) to {destination_dir} ({destination_dir.absolute()})")
-            with zipfile.ZipFile(destination_path, 'r') as zip_ref:
-                zip_ref.extractall(destination_dir)
-            log.info(f"removing {destination_path} ({destination_path.absolute()})")
-            os.remove(destination_path)
+            self.download_cached(s3_key, download_path)
+            log.info(f"extracting {download_path} ({download_path.absolute()}) to {extract_path} ({extract_path.absolute()})")
+            with zipfile.ZipFile(download_path, 'r') as zip_ref:
+                zip_ref.extractall(extract_path)
+            log.info(f"removing {download_path} ({download_path.absolute()})")
+            os.remove(download_path)
             install_success = True
         else:
             log.warning(f"{self.bucket_name}/{s3_key} not found")
