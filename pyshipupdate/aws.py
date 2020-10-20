@@ -45,8 +45,10 @@ class UpdaterAwsS3(Updater, S3Access):
         destination_path = Path(destination_dir, s3_key)
         if self.object_exists(s3_key):
             self.download_cached(s3_key, destination_path)
+            log.info(f"extracting {destination_path} ({destination_path.absolute()}) to {destination_dir} ({destination_dir.absolute()})")
             with zipfile.ZipFile(destination_path, 'r') as zip_ref:
                 zip_ref.extractall(destination_dir)
+            log.info(f"removing {destination_path} ({destination_path.absolute()})")
             os.remove(destination_path)
             install_success = True
         else:
