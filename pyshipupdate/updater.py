@@ -72,7 +72,7 @@ class Updater(ABC):
         """
 
         if app_dir is None:
-            app_dir = user_data_dir(self.target_app_name, self.target_app_author)
+            app_dir = Path(user_data_dir(self.target_app_name, self.target_app_author))
 
         did_update = False
         if isinstance(current_version, str):
@@ -81,6 +81,7 @@ class Updater(ABC):
         greatest_version = self.get_greatest_version()
         log.info(f"{greatest_version=}")
         if greatest_version is not None and greatest_version > current_version:
+            app_dir.mkdir(parents=True, exist_ok=True)
             did_update = self.install_clip(greatest_version, app_dir)
         return did_update
 
