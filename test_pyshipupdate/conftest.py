@@ -5,7 +5,7 @@ from semver import VersionInfo
 
 from awsimple import use_moto_mock_env_var
 
-from pyshipupdate import UpdaterAwsS3, rmdir
+from pyshipupdate import UpdaterAwsS3, rmdir, __author__
 
 from test_pyshipupdate import TstDirs, test_name
 
@@ -32,7 +32,7 @@ def updater_fixture():
     rmdir(TstDirs.app_dir)
     if is_mocked_flag:
         os.environ[use_moto_mock_env_var] = "1"
-    updater = UpdaterAwsS3(test_name)
+    updater = UpdaterAwsS3(test_name, __author__)
     updater.create_bucket()
     for version in ["0.0.1", "0.0.2"]:
         clip_name = f"{test_name}_{version}"

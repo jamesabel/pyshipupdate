@@ -4,6 +4,7 @@ from enum import Enum
 from typing import List
 
 from semver import VersionInfo
+from appdirs import user_data_dir
 from typeguard import typechecked
 from balsa import get_logger
 
@@ -25,8 +26,9 @@ class Updater(ABC):
     Updates a pyship app to its latest released version.  Instantiated and called by a running pyship app.
     """
 
-    def __init__(self, target_app_name: str, allowed_pre_release: List[PreReleaseTypes] = None):
+    def __init__(self, target_app_name: str, target_app_author: str, allowed_pre_release: List[PreReleaseTypes] = None):
         self.target_app_name = target_app_name
+        self.target_app_author = target_app_author
         self.allowed_pre_release = allowed_pre_release  # test, dev, beta, etc.
 
     @abstractmethod
@@ -62,12 +64,16 @@ class Updater(ABC):
         return greatest_version
 
     @typechecked(always=True)
-    def update(self, current_version: (str, VersionInfo), app_dir: Path = Path("..")) -> bool:
+    def update(self, current_version: (str, VersionInfo), app_dir: Path = None) -> bool:
         """
         update this (the target) application (clip dir)
         :param current_version: current version of the running app (both string and VersionInfo allowed)
-        :param app_dir: application directory.  Normally this is just one level "up" from the execution directory, but this can be provided mainly for testing purposes.
+        :param app_dir: destination directory or None to use the user data area
         """
+
+        if app_dir is None:
+            app_dir = user_data_dir(self.target_app_name, self.target_app_author)
+
         did_update = False
         if isinstance(current_version, str):
             current_version = VersionInfo.parse(current_version)
