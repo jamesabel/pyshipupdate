@@ -31,6 +31,10 @@ class Updater(ABC):
         self.target_app_author = target_app_author
         self.allowed_pre_release = allowed_pre_release  # test, dev, beta, etc.
 
+    def get_bucket_name(self):
+        # override this method in case you want to use a different bucket name (bucket names must be globally unique)
+        return f"pyship-{self.target_app_author}-{self.target_app_name}"  # AWS buckets do not allow underscores so use a hyphen
+
     @abstractmethod
     def get_available_versions(self) -> List[VersionInfo]:
         """

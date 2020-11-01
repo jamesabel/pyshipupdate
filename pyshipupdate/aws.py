@@ -26,8 +26,8 @@ class UpdaterAwsS3(Updater, S3Access):
     """
 
     def __init__(self, target_app_name: str, target_app_author: str):
-        S3Access.__init__(self, target_app_name)
         Updater.__init__(self, target_app_name, target_app_author)
+        S3Access.__init__(self, self.get_bucket_name())
 
     @typechecked
     def get_available_versions(self) -> List[VersionInfo]:
