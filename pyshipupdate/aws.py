@@ -12,6 +12,7 @@ import zipfile
 
 from balsa import get_logger
 from awsimple import S3Access
+from awsimple.s3 import BucketNotFound
 from typeguard import typechecked
 
 from pyshipupdate import Updater, __application_name__, version_from_clip_zip, CLIP_EXT
@@ -32,7 +33,12 @@ class UpdaterAwsS3(Updater, S3Access):
     @typechecked
     def get_available_versions(self) -> List[VersionInfo]:
         available_versions = []
-        for s3_key in self.dir():
+        try:
+            bucket_dir = self.dir()
+        except BucketNotFound as e:
+            log.warning(f"Bucket not found,{self.bucket_name=},{e}")
+            bucket_dir = {}
+        for s3_key in bucket_dir:
             version = version_from_clip_zip(self.target_app_name, s3_key)
             if version is not None:
                 available_versions.append(version)
