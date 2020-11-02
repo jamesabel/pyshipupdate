@@ -4,9 +4,6 @@ from tempfile import mkdtemp
 import shutil
 import os
 from semver import VersionInfo
-import time
-from datetime import datetime
-import json
 from typing import List
 import zipfile
 
@@ -15,7 +12,7 @@ from awsimple import S3Access
 from awsimple.s3 import BucketNotFound
 from typeguard import typechecked
 
-from pyshipupdate import Updater, __application_name__, version_from_clip_zip, CLIP_EXT
+from pyshipupdate import Updater, __application_name__, version_from_clip_zip, CLIP_EXT, create_bucket_name
 
 log = get_logger(__application_name__)
 
@@ -28,7 +25,7 @@ class UpdaterAwsS3(Updater, S3Access):
 
     def __init__(self, target_app_name: str, target_app_author: str):
         Updater.__init__(self, target_app_name, target_app_author)
-        S3Access.__init__(self, self.get_bucket_name())
+        S3Access.__init__(self, create_bucket_name(target_app_name, target_app_author))
 
     @typechecked
     def get_available_versions(self) -> List[VersionInfo]:
@@ -36,7 +33,7 @@ class UpdaterAwsS3(Updater, S3Access):
         try:
             bucket_dir = self.dir()
         except BucketNotFound as e:
-            log.warning(f"Bucket not found,{self.bucket_name=},{e}")
+            log.info(f"Bucket not found,{self.bucket_name=},{e}")  # may want to make this a warning
             bucket_dir = {}
         for s3_key in bucket_dir:
             version = version_from_clip_zip(self.target_app_name, s3_key)
@@ -63,21 +60,3 @@ class UpdaterAwsS3(Updater, S3Access):
             log.warning(f"{self.bucket_name}/{s3_key} not found")
             install_success = False
         return install_success
-
-    @typechecked
-    def release(self, version: VersionInfo, clip_dir_path: Path):
-
-        self.create_bucket()  # just in case the S3 bucket doesn't exist
-
-        # zip the clip dir
-        temp_dir = mkdtemp()
-        zip_file_path = Path(shutil.make_archive(Path(temp_dir, clip_dir_path.name), "zip", str(clip_dir_path)))
-
-        # make_archive uses a .zip file extension but we want .clip
-        clip_file_path = Path(zip_file_path.parent, f"{zip_file_path.stem}.{CLIP_EXT}")
-        shutil.move(zip_file_path, clip_file_path)
-
-        self.upload(clip_file_path, clip_file_path.name)
-        ts = time.time()
-        release_info = {"app_name": self.target_app_name, "version": str(version), "release_timestamp": ts, "release_timestamp_human": datetime.fromtimestamp(ts).isoformat()}
-        self.write_string(json.dumps(release_info), f"{self.target_app_name}_release.json")

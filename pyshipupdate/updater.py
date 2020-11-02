@@ -8,7 +8,7 @@ from appdirs import user_data_dir
 from typeguard import typechecked
 from balsa import get_logger
 
-from pyshipupdate import __application_name__
+from pyshipupdate import __application_name__, create_bucket_name
 
 log = get_logger(__application_name__)
 
@@ -30,10 +30,6 @@ class Updater(ABC):
         self.target_app_name = target_app_name
         self.target_app_author = target_app_author
         self.allowed_pre_release = allowed_pre_release  # test, dev, beta, etc.
-
-    def get_bucket_name(self):
-        # override this method in case you want to use a different bucket name (bucket names must be globally unique)
-        return f"pyship-{self.target_app_author}-{self.target_app_name}"  # AWS buckets do not allow underscores so use a hyphen
 
     @abstractmethod
     def get_available_versions(self) -> List[VersionInfo]:
@@ -88,12 +84,3 @@ class Updater(ABC):
             app_dir.mkdir(parents=True, exist_ok=True)
             did_update = self.install_clip(greatest_version, app_dir)
         return did_update
-
-    @abstractmethod
-    def release(self, version: VersionInfo, clip_dir_path: Path):
-        """
-        Release a new app version.  Uploads the clip file to the cloud and sets the new app version file.
-        :param version: new app version
-        :param clip_dir_path: path to clip file ("zipped" clip directory)
-        """
-        ...
