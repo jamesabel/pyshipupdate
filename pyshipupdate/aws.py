@@ -51,7 +51,7 @@ class UpdaterAwsS3(Updater, S3Access):
         if self.object_exists(s3_key):
             self.download_cached(s3_key, download_path)
             log.info(f"extracting {download_path} ({download_path.absolute()}) to {extract_path} ({extract_path.absolute()})")
-            with zipfile.ZipFile(download_path, 'r') as zip_ref:
+            with zipfile.ZipFile(download_path, "r") as zip_ref:
                 zip_ref.extractall(extract_path)
             log.info(f"removing {download_path} ({download_path.absolute()})")
             os.remove(download_path)

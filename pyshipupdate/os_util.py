@@ -5,7 +5,7 @@ from pathlib import Path
 import stat
 from platform import system
 from platform import architecture
-from typing import Callable
+from typing import Callable, Union
 
 from typeguard import typechecked
 from balsa import get_logger
@@ -21,12 +21,11 @@ def is_windows() -> bool:
 
 
 @typechecked(always=True)
-def get_target_os() -> (str, None):
+def get_target_os() -> Union[str, None]:
+    target_os = None  # type: Union[str, None]
     if is_windows():
         bit_string, os_string = architecture()
         target_os = f"{os_string[0:3].lower()}{bit_string[0:2]}"
-    else:
-        target_os = None
     return target_os
 
 
@@ -42,7 +41,7 @@ def _remove_readonly_onerror(func, path, excinfo):
 
 
 @typechecked(always=True)
-def rmdir(p: Path, failure_function: Callable = None, try_limit: int = 5) -> (bool, bool):
+def rmdir(p: Path, failure_function: Callable = None, try_limit: int = 5) -> bool:
     try_count = 0
     delete_ok = False
     delay = 1.0

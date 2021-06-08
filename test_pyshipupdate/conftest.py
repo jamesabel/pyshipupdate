@@ -22,7 +22,6 @@ def options():
 
 @pytest.fixture(autouse=True)
 def updater_fixture():
-
     def clear_mock_env_var():
         try:
             del os.environ[use_moto_mock_env_var]

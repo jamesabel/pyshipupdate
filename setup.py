@@ -22,7 +22,5 @@ setup(
     keywords=["freezer", "installer", "ship"],
     classifiers=[],
     packages=[__application_name__],
-    package_data={
-        "": ["*.ico"],
-    },
+    package_data={"": ["*.ico"], __application_name__: ["py.typed"]},
 )

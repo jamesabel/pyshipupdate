@@ -15,6 +15,9 @@ keyring
 wheel
 wheel-inspect
 black
+flake8
+mypy
+boto3-stubs[s3]
 #
 # docs
 sphinx

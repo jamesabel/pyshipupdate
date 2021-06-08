@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from pathlib import Path
 from enum import Enum
-from typing import List
+from typing import List, Union
 
 from semver import VersionInfo
 from appdirs import user_data_dir
@@ -49,7 +49,7 @@ class Updater(ABC):
         ...
 
     @typechecked(always=True)
-    def get_greatest_version(self) -> (VersionInfo, None):
+    def get_greatest_version(self) -> Union[VersionInfo, None]:
         """
         determine the greatest version and return it
         :return: the greatest version, or None if no versions available
@@ -64,7 +64,7 @@ class Updater(ABC):
         return greatest_version
 
     @typechecked(always=True)
-    def update(self, current_version: (str, VersionInfo), app_dir: Path = None) -> bool:
+    def update(self, current_version: Union[str, VersionInfo], app_dir: Path = None) -> bool:
         """
         update this (the target) application (clip dir)
         :param current_version: current version of the running app (both string and VersionInfo allowed)
