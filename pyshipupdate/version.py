@@ -9,7 +9,7 @@ from pyshipupdate import CLIP_EXT, __application_name__
 log = get_logger(__application_name__)
 
 
-@typechecked(always=True)
+@typechecked
 def version_from_clip_zip(target_app_name: str, candidate_clip_zip: str) -> Union[VersionInfo, None]:
     """
     Tests if a string is a clip zip string.  If so, extract the version from a clip zip string.  If the string is not a valid clip zip string, return None.
