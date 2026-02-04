@@ -8,7 +8,7 @@ from appdirs import user_data_dir
 from typeguard import typechecked
 from balsa import get_logger
 
-from pyshipupdate import __application_name__, create_bucket_name
+from pyshipupdate import __application_name__
 
 log = get_logger(__application_name__)
 
@@ -48,7 +48,7 @@ class Updater(ABC):
         """
         ...
 
-    @typechecked(always=True)
+    @typechecked
     def get_greatest_version(self) -> Union[VersionInfo, None]:
         """
         determine the greatest version and return it
@@ -63,8 +63,8 @@ class Updater(ABC):
         log.info(f"{greatest_version=}")
         return greatest_version
 
-    @typechecked(always=True)
-    def update(self, current_version: Union[str, VersionInfo], app_dir: Path = None) -> bool:
+    @typechecked
+    def update(self, current_version: Union[str, VersionInfo], app_dir: Path | None = None) -> bool:
         """
         update this (the target) application (clip dir)
         :param current_version: current version of the running app (both string and VersionInfo allowed)

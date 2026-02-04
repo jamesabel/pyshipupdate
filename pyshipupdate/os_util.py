@@ -15,12 +15,12 @@ from pyshipupdate import __application_name__
 log = get_logger(__application_name__)
 
 
-@typechecked(always=True)
+@typechecked
 def is_windows() -> bool:
     return system().lower() == "windows"
 
 
-@typechecked(always=True)
+@typechecked
 def get_target_os() -> Union[str, None]:
     target_os = None  # type: Union[str, None]
     if is_windows():
@@ -29,7 +29,7 @@ def get_target_os() -> Union[str, None]:
     return target_os
 
 
-@typechecked(always=True)
+@typechecked
 def remove_readonly(path: Path):
     os.chmod(str(path), stat.S_IWRITE)
 
@@ -40,8 +40,8 @@ def _remove_readonly_onerror(func, path, excinfo):
     func(path)
 
 
-@typechecked(always=True)
-def rmdir(p: Path, failure_function: Callable = None, try_limit: int = 5) -> bool:
+@typechecked
+def rmdir(p: Path, failure_function: Callable | None = None, try_limit: int = 5) -> bool:
     try_count = 0
     delete_ok = False
     delay = 1.0
@@ -88,7 +88,7 @@ def rmdir(p: Path, failure_function: Callable = None, try_limit: int = 5) -> boo
     return delete_ok
 
 
-@typechecked(always=True)
+@typechecked
 def mkdirs(d: Path, remove_first: bool = False, log_function=log.error):
     """
     make directories recursively, optionally deleting first
@@ -113,7 +113,7 @@ def mkdirs(d: Path, remove_first: bool = False, log_function=log.error):
         log_function(f'could not mkdirs "{d}" ({d.absolute()})')
 
 
-@typechecked(always=True)
+@typechecked
 def copy_tree(source: Path, dest: Path, subdir: str):
     # copy the tree, but don't copy things like __pycache__
     dest.mkdir(parents=True, exist_ok=True)
