@@ -26,7 +26,7 @@ class Updater(ABC):
     Updates a pyship app to its latest released version.  Instantiated and called by a running pyship app.
     """
 
-    def __init__(self, target_app_name: str, target_app_author: str, allowed_pre_release: List[PreReleaseTypes] = None):
+    def __init__(self, target_app_name: str, target_app_author: str, allowed_pre_release: List[PreReleaseTypes] | None = None):
         self.target_app_name = target_app_name
         self.target_app_author = target_app_author
         self.allowed_pre_release = allowed_pre_release  # test, dev, beta, etc.
